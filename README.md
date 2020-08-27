@@ -35,6 +35,12 @@ TCP over WebSocket
 * 填写监听端口和ztun的WebSocket地址,保存
 * 测试连接
 
+## 打包为MACOS app
+```yaml
+cp ztun bin/ && cp resizeApi.png bin/ && ./packapp/packapp -assets ./bin/ -bin ztun -icon resizeApi.png  -identifier com.github.zzpu -name ztun -dmg ztun -o  ~/Documents/
+
+```
+
 ## nginx配置实例
 ```yaml
 upstream websocket {
