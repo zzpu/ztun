@@ -11,6 +11,7 @@ type (
 		GetTunList() (tuns []*model.Tunnel, err error)
 		GetTun(id int64) (tun *model.Tunnel, err error)
 		SaveTun(tun *model.Tunnel) (err error)
+		DestroyTun(tun *model.Tunnel) (err error)
 	}
 )
 
@@ -32,6 +33,11 @@ func (d daoEx) GetTun(id int64) (tun *model.Tunnel, err error) {
 
 func (d daoEx) SaveTun(tun *model.Tunnel) (err error) {
 	err = d.dbx.DBWrite().Save(tun).Error
+	return
+}
+
+func (d daoEx) DestroyTun(tun *model.Tunnel) (err error) {
+	err = d.dbx.DBWrite().Delete(tun).Error
 	return
 }
 

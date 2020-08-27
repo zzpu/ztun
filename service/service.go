@@ -48,6 +48,20 @@ func (svc *Service) SaveTun() (err error) {
 	return
 }
 
+func (svc *Service) DestroyTun() (err error) {
+	svc.sel.Name = svc.pad.GetNameText()
+	svc.sel.Port = svc.pad.GetPortText()
+	svc.sel.Remote = svc.pad.GetAddrText()
+
+	err = svc.dao.DestroyTun(svc.sel)
+	if err != nil {
+		return
+	}
+	svc.SelectTun(-1)
+	svc.pad.RefreshTunBox(svc)
+	return
+}
+
 func (svc *Service) SelectTun(id int64) (err error) {
 	if svc.sel.ID == id {
 		return

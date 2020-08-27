@@ -15,6 +15,7 @@ type Pad struct {
 	port    *widget.Entry
 	addTun  *widget.Button
 	save    *widget.Button
+	delete  *widget.Button
 	log     *widget.Entry
 	connect *widget.Check
 }
@@ -130,6 +131,9 @@ func (p *Pad) makeRight(svc *Service) fyne.Widget {
 		svc.SaveTun()
 	})
 
+	p.delete = widget.NewButton("删除", func() {
+		svc.DestroyTun()
+	})
 	p.connect = widget.NewCheck("连接", func(on bool) {
 		if on {
 			err := svc.Connect()
@@ -152,6 +156,7 @@ func (p *Pad) makeRight(svc *Service) fyne.Widget {
 		p.name,
 		p.addr,
 		p.port,
+		p.delete,
 		p.save,
 		p.connect,
 	)
