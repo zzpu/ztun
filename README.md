@@ -1,9 +1,9 @@
-# ztun WebSocket隧道 服务端
+# ztun WebSocket隧道 客户端
 
 TCP over WebSocket
 
 ```
-[tcp 服务器]
+[tcp 服务,如sshd]
  |
  |  <= TCP
  |
