@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -63,31 +64,53 @@ func (c *Client) Start() {
 			defer tcp.Close()
 			ws, _, err := websocket.DefaultDialer.Dial(c.websocketURL, nil)
 			if err != nil {
-				log.Println(err)
+				log.Printf("连接失败,err=%v", err)
 				return
 			}
 			defer ws.Close()
+
+			go func() {
+				for {
+					//30秒发送一次心跳信号
+					time.Sleep(time.Second * 30)
+					if c.info != nil {
+						go c.info(fmt.Sprintf("客户端>>>服务器,心跳..."))
+					}
+					err = ws.WriteMessage(websocket.PingMessage, []byte("ok"))
+					if err != nil {
+						log.Printf("读取失败,err=%v", err)
+						tcp.Close()
+						ws.Close()
+						break
+					}
+				}
+
+			}()
+
+			//客户端流向服务端数据处理
 			go func() {
 				buf := make([]byte, 1024)
 				for {
 					len, err := tcp.Read(buf)
 					if err != nil {
-						log.Println(err)
+						log.Printf("读取失败,err=%v", err)
 						tcp.Close()
 						ws.Close()
 						break
 					}
+					//通知函数不为空，则输出
 					if c.info != nil {
-						c.info(fmt.Sprintf("客户端>>>服务器,数据:%d", len))
+						go c.info(fmt.Sprintf("客户端>>>服务器,数据:%d", len))
 					}
 					log.Printf("客户端>>>服务器,数据:%d", len)
 					ws.WriteMessage(websocket.BinaryMessage, buf[0:len])
 				}
 			}()
+			//服务端流向客户端数据处理
 			for {
 				msgType, buf, err := ws.ReadMessage()
 				if err != nil {
-					log.Println(err)
+					log.Printf("读取失败,err=%v", err)
 					tcp.Close()
 					ws.Close()
 					break
@@ -95,8 +118,9 @@ func (c *Client) Start() {
 				if msgType != websocket.BinaryMessage {
 					log.Println("unknown msgType")
 				}
+				//通知函数不为空，则输出
 				if c.info != nil {
-					c.info(fmt.Sprintf("服务器>>>客户端,数据:%d", len(buf)))
+					go c.info(fmt.Sprintf("服务器>>>客户端,数据:%d", len(buf)))
 				}
 				log.Printf("服务器>>>客户端,数据:%d", len(buf))
 				tcp.Write(buf)

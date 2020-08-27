@@ -107,7 +107,7 @@ func (svc *Service) Connect() (err error) {
 	if client != nil && client.IsRunning() {
 		return
 	}
-	log.Printf("客户端>>>服务器,数据:%s:%s", svc.sel.Port, svc.sel.Remote)
+	log.Printf("客户端>>>服务器,发起连接请求...")
 	client, err = NewClient(svc.sel.Port, svc.sel.Remote)
 	if err != nil {
 		return

@@ -139,6 +139,7 @@ func (p *Pad) makeRight(svc *Service) fyne.Widget {
 			err := svc.Connect()
 			if err != nil {
 				dialog.ShowError(err, p.win)
+				p.connect.Checked = false
 				return
 			}
 			p.save.Disable()
