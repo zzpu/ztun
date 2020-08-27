@@ -54,7 +54,7 @@ func (c *Client) Start() {
 	for {
 		tcp, err := c.l.Accept()
 		if err != nil {
-			c.info(fmt.Sprintf("连接出错%s,", err.Error()))
+			c.info(fmt.Sprintf("连接出错,err=%v,", err))
 			return
 		}
 		c.cons = append(c.cons, tcp)
